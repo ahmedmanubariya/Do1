@@ -1,7 +1,7 @@
 from __future__ import annotations
 from datetime import datetime, date
 from enum import Enum
-from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, Date, DateTime, ForeignKey, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .db import Base
 
@@ -41,7 +41,7 @@ class AuditEvent(Base):
 class QualityRecord(Base):
     __tablename__ = "quality_records"
     id: Mapped[int] = mapped_column(primary_key=True)
-    record_type: Mapped[str] = mapped_column(String(40), index=True)  # complaint/deviation/capa/oos/risk
+    record_type: Mapped[str] = mapped_column(String(40), index=True)
     reference: Mapped[str] = mapped_column(String(50), unique=True, index=True)
     title: Mapped[str] = mapped_column(String(240))
     description: Mapped[str] = mapped_column(Text)
@@ -87,6 +87,17 @@ class DocumentVersion(Base):
     status: Mapped[str] = mapped_column(String(30), default="CURRENT")
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     document: Mapped[ControlledDocument] = relationship(back_populates="versions")
+
+
+class DocumentRead(Base):
+    __tablename__ = "document_reads"
+    __table_args__ = (UniqueConstraint("user_id", "document_id", "revision", name="uq_document_read"),)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    document_id: Mapped[int] = mapped_column(ForeignKey("controlled_documents.id"), index=True)
+    revision: Mapped[str] = mapped_column(String(30))
+    opened_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    last_opened_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
 
 class TrainingAssignment(Base):
