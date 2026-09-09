@@ -1,16 +1,7 @@
 {
   "name": "Eaststone eQMS Development",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-  "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-    "ghcr.io/devcontainers/features/python:1": {
-      "version": "3.12"
-    },
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "22"
-    }
-  },
-  "postCreateCommand": "bash -lc 'sudo service docker start || true; python -m pip install --upgrade pip; python -m pip install -r eqms/api/requirements.txt; cd eqms/web && npm install'",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "postCreateCommand": "bash -lc 'python -m pip install --upgrade pip && python -m pip install -r eqms/api/requirements.txt && cd eqms/web && npm install'",
   "forwardPorts": [5173, 8000, 8080, 5432],
   "portsAttributes": {
     "5173": {
@@ -22,5 +13,5 @@
       "onAutoForward": "silent"
     }
   },
-  "remoteUser": "vscode"
+  "remoteUser": "codespace"
 }
